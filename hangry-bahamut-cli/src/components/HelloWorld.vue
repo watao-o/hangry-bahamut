@@ -34,6 +34,12 @@
     >
       はらぺこバハムートへ
     </v-btn>
+    <v-row justify="center" class="pt-5">
+      <a href="https://jelly2games.com/wp-content/themes/jelly2games/img/harapeko_rule.png" target="_blank" rel="noopener">説明書</a>
+    </v-row>
+    <v-row justify="center" class="pt-5">
+      <a href="https://jelly2games.com/harapeko" target="_blank" rel="noopener">公式サイト</a>
+    </v-row>
   </div>
 </template>
 
