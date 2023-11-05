@@ -1,7 +1,8 @@
 <template>
   <nav>
     <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link> |
+    <!-- <router-link to="/about">About</router-link> | -->
+    <router-link to="/base">Play</router-link> |
     <router-link to="/card-list">CardList</router-link>
   </nav>
   <router-view/>

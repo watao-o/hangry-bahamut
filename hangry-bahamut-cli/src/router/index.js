@@ -1,7 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import Base from '@/components/BaseHungryBahamuto.vue'
-import CardList from '@/components/info/CardList.vue'
 
 const routes = [
   {
@@ -20,12 +18,12 @@ const routes = [
   {
     path: '/base',
     name: 'base',
-    component: Base
+    component: () => import(/* webpackChunkName: "Base" */ '@/components/BaseHungryBahamuto.vue')
   },
   {
     path: '/card-list',
     name: 'card-list',
-    component: CardList
+    component: () => import(/* webpackChunkName: "CardList" */ '@/components/info/CardList.vue')
   }
 ]
 

@@ -23,6 +23,7 @@
 
 <script>
 import { CARD_LIST } from '@/const/common'
+
 export default {
   name: 'CardList',
   props: {
@@ -38,7 +39,7 @@ export default {
       this.cardList.push({
         id: CARD.ID,
         name: CARD.NAME,
-        src: require('@/assets/' + CARD.ID + '.' + CARD.NAME + '.png')
+        src: require(`@/assets/${CARD.ID}.${CARD.NAME}.png`)
       })
     })
   }
