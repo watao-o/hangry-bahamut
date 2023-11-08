@@ -46,26 +46,10 @@
     <!-- 相手カード置き場 -->
     <v-row>
       <v-col cols="10">
-        <v-card class="my-4 img-rotate" color="blue-lighten-5">
-          <v-card-title>相手カード置き場</v-card-title>
-          <v-card-text>
-            <v-row>
-              <v-col
-                v-for="card in enemy.cardList"
-                :key="card.id"
-                cols="2"
-              >
-                <v-card maxWidth="250">
-                  <v-img
-                    contain
-                    :src="card.src"
-                    :alt="card.name"
-                  ></v-img>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
+        <card-place
+          player="enemy"
+          :cardList="enemy.cardList"
+        />
       </v-col>
       <!-- 打ち消し -->
       <v-col cols="1">
@@ -81,26 +65,10 @@
     <!-- 自分のカード置き場 -->
     <v-row>
       <v-col cols="10">
-        <v-card class="my-4" color="red-lighten-5">
-          <v-card-title>マイカード置き場</v-card-title>
-          <v-card-text>
-            <v-row>
-              <v-col
-                v-for="card in your.cardList"
-                :key="card.id"
-                cols="2"
-              >
-                <v-card maxWidth="250">
-                  <v-img
-                    contain
-                    :src="card.src"
-                    :alt="card.name"
-                  ></v-img>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
+        <card-place
+          player="your"
+          :cardList="your.cardList"
+        />
       </v-col>
       <!-- 山札 -->
       <v-col cols="1">
@@ -167,6 +135,7 @@ import { CARD_LIST } from '@/const/common'
 import HandCard from './HandCard.vue'
 import Utikeshi from './Utikeshi.vue'
 import Life from './Life.vue'
+import CardPlace from './CardPlace.vue'
 
 export default {
   name: 'BaseHungryBahamuto',
@@ -175,7 +144,8 @@ export default {
   components: {
     HandCard,
     Utikeshi,
-    Life
+    Life,
+    CardPlace
   },
   data () {
     return {
