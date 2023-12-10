@@ -1,5 +1,11 @@
 <template>
   <v-container class="hello">
+    <v-row>
+      <v-btn
+        @click="jankenMain()"
+        color="blue"
+      >じゃんけん</v-btn>
+    </v-row>
     <!-- 相手の手札置き場 -->
     <v-row>
       <v-col cols="10">
@@ -136,6 +142,7 @@ import HandCard from './HandCard.vue'
 import Utikeshi from './Utikeshi.vue'
 import Life from './Life.vue'
 import CardPlace from './CardPlace.vue'
+import { io } from 'socket.io-client'
 
 export default {
   name: 'BaseHungryBahamuto',
@@ -149,6 +156,7 @@ export default {
   },
   data () {
     return {
+      socket: io('http://localhost:3000'),
       decks: [],
       dumpCards: [],
       utikeshiChips: 2,
@@ -167,6 +175,9 @@ export default {
     }
   },
   created () {
+    this.socket.on('connect', () => {
+      console.log('connected')
+    })
     // カード画像の取得(山札作成)
     CARD_LIST.forEach(CARD => {
       this.decks.push({
@@ -197,6 +208,36 @@ export default {
     /** 乱数生成 */
     makeRandomNum (min, max) {
       return Math.floor(Math.random() * (max + 1 - min)) + min
+    },
+    jankenMain () {
+      console.log(this.janken('1', '1'), 'グー:グー')
+      console.log(this.janken('1', '2'), 'グー:チョキ')
+      console.log(this.janken('1', '3'), 'グー:パー')
+      console.log(this.janken('2', '1'), 'チョキ:グー')
+      console.log(this.janken('2', '2'), 'チョキ:チョキ')
+      console.log(this.janken('2', '3'), 'チョキ:パー')
+      console.log(this.janken('3', '1'), 'パー:グー')
+      console.log(this.janken('3', '2'), 'パー:チョキ')
+      console.log(this.janken('3', '3'), 'パー:パー')
+    },
+    /**
+     * 1:グー
+     * 2:チョキ
+     * 3:パー
+     */
+    janken (hand1, hand2) {
+      // あいこ
+      if (hand1 === hand2) {
+        return 'あいこ'
+      // 勝ち
+      } else if ((hand1 === '1' && hand2 === '2') ||
+                 (hand1 === '2' && hand2 === '3') ||
+                 (hand1 === '3' && hand2 === '1')) {
+        return '勝ち'
+      // 負け
+      } else {
+        return '負け'
+      }
     }
   }
 }
