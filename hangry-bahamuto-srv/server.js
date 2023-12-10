@@ -20,15 +20,7 @@ http.listen(process.env.PORT || 3000, () => {
 io.on('connection', (socket) => {
   console.log('接続:', socket.id)
   // console.log(socket)
-  // 受信したイベントの処理を記載する
-  socket.on('sampleEvent', () => {
-    // イベントを記載
-    console.log('イベント受信成功')
-    // クライアントにイベント送信
-    socket.join(socket.io)
-    io.to(socket.id).emit('recieveSampleEvent', '通信成功！！')
-  })
-
+  
   // 部屋を作成する
   socket.on('createRoom', (userName, status) => {
     if (userName == "") {
@@ -41,8 +33,7 @@ io.on('connection', (socket) => {
       socketId: socket.id,
       name: userName,
       roomId,
-      cards: [],
-      status: status,
+      cards: []
     };
     const room = {
       id: roomId,
@@ -54,9 +45,35 @@ io.on('connection', (socket) => {
     io.to(socket.id).emit("updateRoom", room, room.users.length)
   })
   // 部屋を検索する
-  socket.on('searchRoom', (userName, status) => {
-
+  socket.on('searchRoom', () => {
+    console.log('ルーム検索')
+    console.log('rooms:', rooms)
+    roomIdList = rooms.map(r => r.id)
+    console.log('roomIdList:', roomIdList)
+    io.to(socket.id).emit('resultSearchRoom', roomIdList)
   })
+  // 部屋に入室する
+  socket.on('enterRoom', (userName, roomId) => {
+    console.log('ルーム入室')
+    console.log('  userName, roomId:', userName, roomId)
+    console.log('  rooms:', rooms)
+    // ルームIDからルームオブジェクトを取得
+    const joinRoom = rooms.find(r => r.id === roomId)
+    console.log('  参加する部屋：', joinRoom)
+
+    // ユーザ情報作成
+    const user = {
+      socketId: socket.id,
+      name: userName,
+      roomId,
+      cards: []
+    };
+    joinRoom.users.push(user)
+    socket.join(roomId)
+    console.log('参加後のrooms:', JSON.stringify(rooms, null, 2))
+    // io.to(socket.id).emit("updateRoom", room, room.users.length)
+  })
+  
 })
 
 // ランダムなroomId(1000~9999)を生成する

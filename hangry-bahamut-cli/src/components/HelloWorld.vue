@@ -47,19 +47,27 @@
           :readonly="roomIdList.length === 0"
           dense
           filled
-          label="ルームID"
+          label="ルームIDリスト"
           class="custom-col"
         />
       </v-col>
-      <v-col cols="2">
-        <v-text-field
-          v-model="roomId"
-          :readonly="joinRoom"
-          dirty
-          flat
-          label="ルームID"
-          class="custom-col"
-        />
+      <v-col cols="1">
+        <v-btn
+          color="blue"
+          :disabled="joinRoom"
+          @click="searchRoom"
+        >
+          ルーム検索
+        </v-btn>
+      </v-col>
+      <v-col cols="1">
+        <v-btn
+          color="blue"
+          :disabled="roomIdList.length === 0"
+          @click="enterRoom"
+        >
+          入室
+        </v-btn>
       </v-col>
       <v-col cols="2">
         <v-text-field
@@ -75,27 +83,10 @@
       <v-col cols="1">
         <v-btn
           color="pink"
-          @click="enterRoom"
-        >
-          入室
-        </v-btn>
-      </v-col>
-      <v-col cols="1">
-        <v-btn
-          color="pink"
           :disabled="joinRoom"
           @click="createRoom"
         >
           ルーム作成
-        </v-btn>
-      </v-col>
-      <v-col cols="1">
-        <v-btn
-          color="pink"
-          :disabled="joinRoom"
-          @click="searchRoom"
-        >
-          ルーム検索
         </v-btn>
       </v-col>
     </v-row>
@@ -136,12 +127,31 @@ export default {
       this.roomId = room.id
       console.log('updateRoom:', this.room)
     })
+    this.socket.on('resultSearchRoom', (roomIdList) => {
+      console.log('検索結果：', roomIdList)
+      this.roomIdList = roomIdList
+    })
+    // エラー発生
+    this.socket.on('notifyError', (error) => {
+      this.message = error
+      // this.snackbar = true
+      console.log('エラー発生：', error)
+    })
   },
   methods: {
     /** 入室 */
     enterRoom () {
       console.log('入室:', this.userName)
-      this.socket.emit('enterRoom', this.userName, '')
+      console.log('ルームID:', this.roomId)
+      if (this.roomId === '') {
+        alert('ルームIDを選択してください')
+        return
+      }
+      if (this.userName === '') {
+        alert('ユーザ名を入力してください')
+        return
+      }
+      this.socket.emit('enterRoom', this.userName, this.roomId)
     },
     /** ルーム作成 */
     createRoom () {
