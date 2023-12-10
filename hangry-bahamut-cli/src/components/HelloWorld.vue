@@ -28,12 +28,77 @@
       <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
       <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
     </ul> -->
-    <v-btn
-      color="blue"
-      @click="$router.push('./base')"
+    <v-row justify="center">
+      <v-btn
+        color="blue"
+        @click="$router.push('./base')"
+      >
+        はらぺこバハムートをプレイ！
+      </v-btn>
+    </v-row>
+    <v-row
+      justify="center"
+      class="py-5"
     >
-      はらぺこバハムートをプレイ！
-    </v-btn>
+      <v-col cols="2">
+        <v-autocomplete
+          v-model="roomId"
+          :items="roomIdList"
+          :readonly="roomIdList.length === 0"
+          dense
+          filled
+          label="ルームID"
+          class="custom-col"
+        />
+      </v-col>
+      <v-col cols="2">
+        <v-text-field
+          v-model="roomId"
+          :readonly="joinRoom"
+          dirty
+          flat
+          label="ルームID"
+          class="custom-col"
+        />
+      </v-col>
+      <v-col cols="2">
+        <v-text-field
+          v-model="userName"
+          dirty
+          flat
+          label="ユーザ名"
+          :readonly="joinRoom"
+          class="custom-col"
+        >
+        </v-text-field>
+      </v-col>
+      <v-col cols="1">
+        <v-btn
+          color="pink"
+          @click="enterRoom"
+        >
+          入室
+        </v-btn>
+      </v-col>
+      <v-col cols="1">
+        <v-btn
+          color="pink"
+          :disabled="joinRoom"
+          @click="createRoom"
+        >
+          ルーム作成
+        </v-btn>
+      </v-col>
+      <v-col cols="1">
+        <v-btn
+          color="pink"
+          :disabled="joinRoom"
+          @click="searchRoom"
+        >
+          ルーム検索
+        </v-btn>
+      </v-col>
+    </v-row>
     <v-row justify="center" class="pt-5">
       <a href="https://jelly2games.com/wp-content/themes/jelly2games/img/harapeko_rule.png" target="_blank" rel="noopener">説明書</a>
     </v-row>
@@ -44,10 +109,50 @@
 </template>
 
 <script>
+import { io } from 'socket.io-client'
+
 export default {
   name: 'HelloWorld',
   props: {
     msg: String
+  },
+  data () {
+    return {
+      userName: '',
+      socket: io('http://localhost:3000'),
+      joinRoom: false,
+      roomId: '',
+      roomIdList: [],
+      room: []
+    }
+  },
+  mounted () {
+    // ルーム情報更新
+    this.socket.on('updateRoom', (room, playerNum) => {
+      this.joinRoom = true
+      // this.playerNum = playerNum
+      // ルーム情報更新
+      this.room = room
+      this.roomId = room.id
+      console.log('updateRoom:', this.room)
+    })
+  },
+  methods: {
+    /** 入室 */
+    enterRoom () {
+      console.log('入室:', this.userName)
+      this.socket.emit('enterRoom', this.userName, '')
+    },
+    /** ルーム作成 */
+    createRoom () {
+      console.log('部屋作成:', this.userName)
+      this.socket.emit('createRoom', this.userName, '')
+    },
+    /** ルーム検索 */
+    searchRoom () {
+      console.log('部屋検索:', this.userName)
+      this.socket.emit('searchRoom')
+    }
   }
 }
 </script>
