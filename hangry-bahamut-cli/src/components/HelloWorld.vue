@@ -131,6 +131,32 @@ export default {
       console.log('検索結果：', roomIdList)
       this.roomIdList = roomIdList
     })
+    // ２人そろったらゲーム開始
+    this.socket.on('gameStart', (room) => {
+      console.log('ゲーム開始')
+      console.log('room:', room)
+      console.log(this.socket)
+      console.log('userName:', this.userName)
+      this.room = room
+      sessionStorage.setItem('userName', this.userName)
+      sessionStorage.setItem('room', JSON.stringify(room))
+      // sessionStorage.setItem('socket', JSON.stringify(this.socket))
+
+      this.$toast.success('★ゲームを開始します★')
+      // alert('★ゲームを開始します★')
+      setTimeout(() => {
+        this.$router.push(
+          {
+            name: 'base',
+            params: {
+              socket: this.socket,
+              room: this.room,
+              userName: this.userName
+            }
+          }
+        )
+      }, 2000)
+    })
     // エラー発生
     this.socket.on('notifyError', (error) => {
       this.message = error

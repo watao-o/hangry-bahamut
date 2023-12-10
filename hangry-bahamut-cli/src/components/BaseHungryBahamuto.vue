@@ -6,6 +6,9 @@
         color="blue"
       >じゃんけん</v-btn>
     </v-row>
+    <v-row>
+      ユーザ名：{{ userName }}
+    </v-row>
     <!-- 相手の手札置き場 -->
     <v-row>
       <v-col cols="10">
@@ -142,11 +145,14 @@ import HandCard from './HandCard.vue'
 import Utikeshi from './Utikeshi.vue'
 import Life from './Life.vue'
 import CardPlace from './CardPlace.vue'
-import { io } from 'socket.io-client'
+// import { io } from 'socket.io-client'
 
 export default {
   name: 'BaseHungryBahamuto',
   props: {
+    socket: { type: Object },
+    room: { type: Array },
+    userName: { type: String }
   },
   components: {
     HandCard,
@@ -156,7 +162,7 @@ export default {
   },
   data () {
     return {
-      socket: io('http://localhost:3000'),
+      // socket: io('http://localhost:3000'),
       decks: [],
       dumpCards: [],
       utikeshiChips: 2,
@@ -175,9 +181,9 @@ export default {
     }
   },
   created () {
-    this.socket.on('connect', () => {
-      console.log('connected')
-    })
+    // this.socket.on('connect', () => {
+    //   console.log('connected')
+    // })
     // カード画像の取得(山札作成)
     CARD_LIST.forEach(CARD => {
       this.decks.push({
@@ -195,6 +201,23 @@ export default {
       this.getCard(this.your.handCardList)
       this.getCard(this.enemy.handCardList)
     }
+  },
+  mounted () {
+    console.log('mounted')
+    console.log('socket:', this.socket)
+    console.log('room:', this.room)
+    console.log('userName:', this.userName)
+
+    const userName = sessionStorage.getItem('userName')
+    const room = sessionStorage.getItem('room')
+    // this.socket.on('connect', () => {
+    //   console.log('再接続connected')
+    // })
+    // this.socket.emit('gameStartEnter', userName, room)
+    // const socket = sessionStorage.getItem('socket')
+    console.log('sessionUserName:', userName)
+    console.log('room:', room)
+    // console.log('socket:', socket)
   },
   methods: {
     /** 山札からカードを引く */

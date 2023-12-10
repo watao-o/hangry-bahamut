@@ -71,9 +71,8 @@ io.on('connection', (socket) => {
     joinRoom.users.push(user)
     socket.join(roomId)
     console.log('参加後のrooms:', JSON.stringify(rooms, null, 2))
-    // io.to(socket.id).emit("updateRoom", room, room.users.length)
+    io.to(roomId).emit("gameStart", joinRoom)
   })
-  
 })
 
 // ランダムなroomId(1000~9999)を生成する
