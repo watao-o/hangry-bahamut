@@ -100,7 +100,7 @@
 </template>
 
 <script>
-import { io } from 'socket.io-client'
+import { useSocketStore, useRoomStore, useUserNameStore } from '@/stores/store'
 
 export default {
   name: 'HelloWorld',
@@ -110,11 +110,11 @@ export default {
   data () {
     return {
       userName: '',
-      socket: io('http://localhost:3000'),
       joinRoom: false,
       roomId: '',
       roomIdList: [],
-      room: []
+      room: [],
+      socket: useSocketStore().$state.socket
     }
   },
   mounted () {
@@ -135,26 +135,16 @@ export default {
     this.socket.on('gameStart', (room) => {
       console.log('ゲーム開始')
       console.log('room:', room)
-      console.log(this.socket)
       console.log('userName:', this.userName)
+      console.log('socket:', this.socket)
+      console.log('socketId:', this.socket.id)
       this.room = room
-      sessionStorage.setItem('userName', this.userName)
-      sessionStorage.setItem('room', JSON.stringify(room))
-      // sessionStorage.setItem('socket', JSON.stringify(this.socket))
+      useRoomStore().set(room)
+      useUserNameStore().set(this.userName)
 
       this.$toast.success('★ゲームを開始します★')
-      // alert('★ゲームを開始します★')
       setTimeout(() => {
-        this.$router.push(
-          {
-            name: 'base',
-            params: {
-              socket: this.socket,
-              room: this.room,
-              userName: this.userName
-            }
-          }
-        )
+        this.$router.push('./base')
       }, 2000)
     })
     // エラー発生
